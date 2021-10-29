@@ -19,6 +19,7 @@ struct AddJobView: View {
     @State private var name = ""
     @State private var isActiveJob = ["Active", "Complete"]
     @State private var jobStatus = 0
+    @State private var category = Category.needsEstimate
     @State private var showingAddAlert = false
     @State private var addAlertMessage = ""
     @State private var addAlertTitle = ""
@@ -56,15 +57,13 @@ struct AddJobView: View {
                         }
                     }
                 }
-                HStack {
-                    Spacer()
-                    Picker("Is Active", selection: $jobStatus) {
-                        ForEach(0..<isActiveJob.count) {
-                            Text(isActiveJob[$0])
+                
+                Section(header: Text("Job Status")) {
+                    Picker(category.asString, selection: $category) {
+                        ForEach(Array(Category.allCases), id: \.self) {
+                            Text($0.rawValue)
                         }
                     }
-                    .pickerStyle(SegmentedPickerStyle())
-                    Spacer()
                 }
                 
                 DatePicker("Start Date", selection: $jobStartDate, displayedComponents: .date)
@@ -78,15 +77,6 @@ struct AddJobView: View {
                 }
                 
                 if useClientAddress {
-//                    if forClient != nil {
-//                        Section(header: Text("Address")) {
-//                            Text(forClient?.address?.street ?? "")
-//                            Text(forClient?.address?.city ?? "")
-//                            Text(forClient?.address?.state ?? "")
-//                            Text(forClient?.address?.zip ?? "")
-//                            Text(forClient?.address?.country ?? "")
-//                        }
-//                    } else {
                         Section(header: Text("Address")) {
                             Text(client.address?.street ?? "")
                             Text(client.address?.city ?? "")
@@ -94,7 +84,6 @@ struct AddJobView: View {
                             Text(client.address?.zip ?? "")
                             Text(client.address?.country ?? "")
                         }
-//                    }
                 } else {
                     Section(header: Text("Address")) {
                         TextField("Street", text: $street)
@@ -147,10 +136,10 @@ struct AddJobView: View {
         let newJob = Project()
         newJob.name = name
         newJob.client = "\(client.firstName) \(client.lastName)"
-        
+        newJob.category = category.asString
         newJob.startDate = jobStartDate
-        newJob.isActive = isActiveJob[jobStatus]
-        newJob.startTime = Date()
+        newJob.isActive = isActiveJob[0]
+        newJob.startTime = jobStartDate
         newJob.address = useClientAddress ? clientAddress : newAddress
         newJob.partition = "public=\(state.user?.companyID ?? "")"
         
@@ -159,6 +148,7 @@ struct AddJobView: View {
         
         
         addAlertTitle = "Success"
+        addAlertMessage = "Job Added"
         
         state.shouldIndicateActivity = false
         showingAddAlert = true

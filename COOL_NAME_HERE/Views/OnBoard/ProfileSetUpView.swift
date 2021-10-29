@@ -40,115 +40,115 @@ struct ProfileSetupView: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
-            ProfileBannerView(firstName: $firstName, lastName: $lastName, displayName: $displayName, photo: $photo)
-            
-            VStack(spacing: 8) {
-                HStack {
+        ScrollView(.vertical) {
+            VStack(spacing: 10) {
+                ProfileBannerView(firstName: $firstName, lastName: $lastName, displayName: $displayName, photo: $photo)
+                
+                VStack(spacing: 8) {
+                    HStack {
+                        
+                        CharactersRemainView(characterCount: characterCount)
+                        
+                        Spacer()
+                        
+                    }
+                    .padding(.horizontal)
                     
-                    CharactersRemainView(characterCount: characterCount)
+                    TextEditor(text: $bio)
+                        .frame(height: 100)
+                        .padding(.horizontal, 5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8.0)
+                                .stroke(Color.secondary, lineWidth: 1)
+                        )
+                        .padding(.horizontal)
+                    
+                }
+                VStack {
+                    HStack {
+                        Text("Contact info")
+                            .bold()
+                            .foregroundColor(.brandPrimary)
+                            .font(.caption)
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Image(systemName: "phone.fill")
+                            .foregroundColor(.brandPrimary)
+                        TextField("Phone", text: $phoneNumber)
+                    }
+                    
+                    Divider()
+                        .padding()
+                    
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(.brandPrimary)
+                        VStack {
+                            TextField("Street", text: $street)
+                            TextField("City", text: $city)
+                            TextField("State", text: $residentState)
+                            TextField("Zip", text: $zip)
+                            TextField("Country", text: $country)
+                        }
+                    }
+                    
+                    Divider()
+                        .padding()
+                    
+                    HStack {
+                        Text("Share info")
+                            .bold()
+                            .foregroundColor(.brandPrimary)
+                            .font(.caption)
+                        Spacer()
+                    }
+                    Toggle(isOn: $shareContactInfo) {
+                        Text("Share contact info with others in your business?")
+                    } .toggleStyle(SwitchToggleStyle(tint: Color.brandPrimary))
                     
                     Spacer()
-                    
                 }
                 .padding(.horizontal)
                 
-                TextEditor(text: $bio)
-                    .frame(height: 100)
-                    .padding(.horizontal, 5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8.0)
-                            .stroke(Color.secondary, lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                
-            }
-            VStack {
-                HStack {
-                    Text("Contact info")
-                        .bold()
-                        .foregroundColor(.brandPrimary)
-                        .font(.caption)
-                    Spacer()
-                }
-                
-                HStack {
-                    Image(systemName: "phone.fill")
-                        .foregroundColor(.brandPrimary)
-                    TextField("Phone", text: $phoneNumber)
-                }
-                
-                Divider()
-                    .padding()
-                
-                HStack(alignment: .firstTextBaseline) {
-                    Image(systemName: "location.fill")
-                        .foregroundColor(.brandPrimary)
-                    VStack {
-                        TextField("Street", text: $street)
-                        TextField("City", text: $city)
-                        TextField("State", text: $residentState)
-                        TextField("Zip", text: $zip)
-                        TextField("Country", text: $country)
-                    }
-                }
-                
-                Divider()
-                    .padding()
-                
-                HStack {
-                    Text("Share info")
-                        .bold()
-                        .foregroundColor(.brandPrimary)
-                        .font(.caption)
-                    Spacer()
-                }
-                Toggle(isOn: $shareContactInfo) {
-                    Text("Share contact info with others in your business?")
-                } .toggleStyle(SwitchToggleStyle(tint: Color.brandPrimary))
-                
                 Spacer()
-            }
-            .padding(.horizontal)
-            
-            Spacer()
-            
-            if !state.setUpNewCompany {
-                NavigationLink(destination: ConfirmCompanyView(userID: state.user!._id)
-                                .environment(\.realmConfiguration,
-                                              app.currentUser!.configuration(partitionValue: "public=public"))
-                               , isActive: $navigate, label: {
-                    
-                    CallToActionButton(title: "Next",
-                                       action: {
-                        saveProfile()
-                        navigate = true
+                
+                if !state.setUpNewCompany {
+                    NavigationLink(destination: ConfirmCompanyView(userID: state.user!._id)
+                                    .environment(\.realmConfiguration,
+                                                  app.currentUser!.configuration(partitionValue: "public=public"))
+                                   , isActive: $navigate, label: {
+                        
+                        CallToActionButton(title: "Next",
+                                           action: {
+                            saveProfile()
+                            navigate = true
+                        })
                     })
-                })
-                    .padding(.horizontal)
-            } else {
-                NavigationLink(destination: CompanySetUpView()
-                                .environment(\.realmConfiguration,
-                                              app.currentUser!.configuration(partitionValue: "public=public"))
-                               , isActive: $navigate, label: {
-                    
-                    CallToActionButton(title: "Next",
-                                       action: {
-                        saveProfile()
-                        navigate = true
+                        .padding(.horizontal)
+                } else {
+                    NavigationLink(destination: CompanySetUpView()
+                                    .environment(\.realmConfiguration,
+                                                  app.currentUser!.configuration(partitionValue: "public=public"))
+                                   , isActive: $navigate, label: {
+                        
+                        CallToActionButton(title: "Next",
+                                           action: {
+                            saveProfile()
+                            navigate = true
+                        })
+                            .disabled(displayName.isEmpty)
+                        
+                        
                     })
-                        .disabled(displayName.isEmpty)
-                    
-                    
-                })
-                    .padding(.horizontal)
+                        .padding(.horizontal)
+                }
+                
             }
-            
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Create Profile")
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("Create Profile")
-        
-        
     }
     
     func checkForRequest() -> Bool {

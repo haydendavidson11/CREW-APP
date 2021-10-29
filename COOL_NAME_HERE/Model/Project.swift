@@ -38,7 +38,7 @@ import RealmSwift
         }
 }
 
-enum Category: String {
+enum Category: String, CaseIterable {
     case archived = "Archived"
     case needsEstimate = "Needs Estimate"
     case estimatePending = "Estimate Pending"

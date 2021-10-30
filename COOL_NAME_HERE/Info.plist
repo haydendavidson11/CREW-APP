@@ -23,15 +23,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Allow acces to your calendar to add shifts to your calendar.</string>
+	<string>Allow acces to your calendar to add shifts add and edit your shifts. You can change this at any point in the settings app.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow access to photos for profile picture.</string>
+	<string>Allow access to your camera to add a profile picture or add pictures to jobs and client cards. The photos added to the app are stored securely with your profile and business information.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Allow acces to import from contacts. You can change this at any point in the settings app.</string>
+	<string>Allow access to import from contacts. only the contacts selected by your are accessed. You can change this at any point in the settings app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Share your location with other CrewMembers</string>
+	<string>Share your location with other CrewMembers. You can change this at any point in the settings app.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow acces to photos for sharing </string>
+	<string>Allow access to your photos to add a profile picture or add pictures to jobs and client cards. The photos added to the app are stored securely with your profile and business information.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

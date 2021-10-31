@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
-          "revision": "052f92ef8dd411616cfcfae8dd82888dcd4ecf45",
-          "version": "10.16.0"
+          "revision": "9f43d0da902c55b493d6c8bb63203764caa8acbe",
+          "version": "10.18.0"
         }
       },
       {

@@ -117,6 +117,12 @@ struct RequestListView: View {
     @EnvironmentObject var state: AppState
     
     @ObservedResults(Request.self) var requests
+    
+    @State private var timedOut = false
+    
+    @State private var companyName = ""
+    
+    @State private var goToMeView = false
 
     var filteredRequests: Results<Request> {
         return requests.filter(NSPredicate(format: "recipient == %@", state.user!.userName))
@@ -134,22 +140,31 @@ struct RequestListView: View {
         return receivedRequests.count > 0 || sentRequests.count > 0
     }
     
-    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let now = Date()
     
     var body: some View {
         if state.user != nil {
             Section(header: Label("Company Invites", systemImage: "envelope")) {
 //                if state.user?.companyID == "pending"  {
-                    if receivedRequests.count < 1 && sentRequests.count < 1 && state.user?.companyID == "pending" {
+                    if receivedRequests.count < 1 && sentRequests.count < 1 && state.user?.companyID == "pending" && !timedOut {
                         HStack {
                             ProgressView()
-                            Text("We found a pending request for you. Give us a moment to pull up the details.")
+                            Text("Looking for a pending request. Give us a moment to pull up the details.")
+                        }
+                        .onReceive(timer) { time in
+                            if time > now.addingTimeInterval(10) {
+                                timedOut = true
+                            }
                         }
                     } else {
                         
-                        if state.user?.companyID == nil {
+                        if timedOut && !hasRequest  && state.loggedIn {
                             Text("You have no pending request at this time.")
-                            //                    // find your company?
+                            NavigationLink("Request invite to existing business", destination: CompanyPickerView(companyName: $companyName, goToMeView: $goToMeView)
+                                            .environment(\.realmConfiguration,
+                                                          app.currentUser!.configuration(partitionValue: "public=public")))
+                                .foregroundColor(.brandPrimary)
                         }
                         
                         if sentRequests.count > 0 {
@@ -158,9 +173,11 @@ struct RequestListView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 ForEach(sentRequests) { request in
-                                    RequestView(request: request)
-                                        .environment(\.realmConfiguration,
-                                                      app.currentUser!.configuration(partitionValue: "public=public"))
+                                    if state.loggedIn {
+                                        RequestView(request: request)
+                                            .environment(\.realmConfiguration,
+                                                          app.currentUser!.configuration(partitionValue: "public=public"))
+                                    }
                                     
                                 }
                             }
@@ -180,19 +197,6 @@ struct RequestListView: View {
                             }
                         }
                     }
-//                } else {
-//
-//                    Text("You have no pending request at this time.")
-//                    // find your company?
-//
-//
-//    //                ForEach(filteredRequests) { request in
-//    //                    RequestView(request: request)
-//    //                        .environment(\.realmConfiguration,
-//    //                                      app.currentUser!.configuration(partitionValue: "public=public"))
-//    //
-//    //                }
-//                }
             }
         }
     }

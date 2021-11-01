@@ -184,7 +184,10 @@ struct AddPeopleView: View {
             
             Text("Enter the email and position of the person you'd like to invite to join your business.")
                 .multilineTextAlignment(.center)
-            TextField("Email", text: $email)
+            TextField("email", text: $email)
+                .textContentType(.emailAddress)
+                .autocapitalization(.none)
+               
             
             Picker(roleSelection.asString, selection: $roleSelection) {
                 ForEach(Array(Role.allCases), id: \.self) {

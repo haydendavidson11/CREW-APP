@@ -27,32 +27,57 @@ struct ConfirmCompanyView: View {
     @State private var goToMeView = false
     
     var body: some View {
-        VStack {
-            if state.loggedIn && goToMeView {
-                MeView()
-                    .environment(\.realmConfiguration,
-                                  app.currentUser!.configuration(partitionValue: "user=\(state.user?._id ?? "")"))
-            } else {
-                
-                if state.loggedIn && !state.setUpNewCompany {
-                    VStack(spacing: 16){
-                        Text("Looks like you aren't a part of any of our existing businesses")
-                            .multilineTextAlignment(.center)
-                        NavigationLink("Request invite to existing business", destination: CompanyPickerView(companyName: $companyName, goToMeView: $goToMeView)
-                                        .environment(\.realmConfiguration,
-                                                      app.currentUser!.configuration(partitionValue: "public=public")))
-                            .foregroundColor(.brandPrimary)
-                        
-                        
-                        Spacer()
-                    }
-                } else {
-                    CompanySetUpView()
+        if state.user != nil {
+            VStack {
+                if state.loggedIn && goToMeView {
+                    MeView()
                         .environment(\.realmConfiguration,
-                                      app.currentUser!.configuration(partitionValue: "public=public"))
+                                      app.currentUser!.configuration(partitionValue: "user=\(state.user?._id ?? "")"))
+                } else {
+                    
+                    if state.loggedIn && !state.setUpNewCompany {
+                        VStack(spacing: 16){
+                            Text("Looks like you aren't a part of any of our existing businesses")
+                                .multilineTextAlignment(.center)
+                            NavigationLink("Request invite to existing business", destination: CompanyPickerView(companyName: $companyName, goToMeView: $goToMeView)
+                                            .environment(\.realmConfiguration,
+                                                          app.currentUser!.configuration(partitionValue: "public=public")))
+                                .foregroundColor(.brandPrimary)
+                            
+                            
+                            Spacer()
+                            CallToActionButton(title: "Logout") {
+                                state.user?.companyID = nil
+                                logout()
+                            }
+                            .padding()
+                        }
+                       
+                       
+                    } else if state.loggedIn {
+                        CompanySetUpView()
+                            .environment(\.realmConfiguration,
+                                          app.currentUser!.configuration(partitionValue: "public=public"))
+                    }
                 }
             }
-        }.onAppear(perform: findCompany)
+            .onAppear(perform: findCompany)
+            .navigationBarItems(trailing: LogoutButton())
+        } else {
+            LoginView()
+        }
+    }
+    
+    private func logout() {
+        app.currentUser?.logOut()
+        
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in
+            }, receiveValue: {
+                state.shouldIndicateActivity = false
+                state.logoutPublisher.send($0)
+            })
+            .store(in: &state.cancellables)
     }
     
     func findCompany() {

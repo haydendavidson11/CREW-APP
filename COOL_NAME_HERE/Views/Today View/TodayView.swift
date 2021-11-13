@@ -63,7 +63,7 @@ struct TodayView: View {
     }
     
     var firstJob: Bool {
-        guard let currentJob = currentJob else {return false}
+        guard let currentJob = currentJob else { return false }
         let pos = todaysProjects.firstIndex(of: currentJob)
         
         if pos == 0 {
@@ -386,7 +386,9 @@ struct TodayView: View {
             project.crew.contains(state.user?._id ?? "")
         }
         
-        self.todaysProjects = userProjectsForToday
+        self.todaysProjects = userProjectsForToday.sorted(by: { proj1 , proj2 in
+            proj1.startDate ?? Date() < proj2.startDate ?? Date()
+        })
         
         
 //        guard let startTime = project.startTime else { return }

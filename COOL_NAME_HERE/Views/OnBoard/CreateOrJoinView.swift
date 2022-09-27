@@ -12,10 +12,8 @@ struct CreateOrJoinView: View {
     @State private var navigate = false
     @State private var goToLogin = false
     
-    
     var body: some View {
         VStack {
-            
             Section {
                 Text("Welcome to CREW.")
                     .font(.title)
@@ -28,13 +26,19 @@ struct CreateOrJoinView: View {
             Divider()
                 .padding()
             VStack(spacing: 16) {
-                NavigationLink(destination: SetUpAccountView(setUpNewCompany: true), isActive: $isActive) {
-                    CallToActionButton(title: "Create new business", action: {self.isActive.toggle()})
+                NavigationLink(
+                    destination: SetUpAccountView(setUpNewCompany: true),
+                    isActive: $isActive
+                ) {
+                    CallToActionButton(
+                        title: "Create new business",
+                        action: { isActive.toggle() }
+                    )
                 }
                 
                 NavigationLink(destination: SetUpAccountView(setUpNewCompany: false), isActive: $navigate) {
                     CallToActionButton(title: "Join existing business") {
-                        self.navigate.toggle()
+                        navigate.toggle()
                     }
                 }
             }
@@ -45,7 +49,7 @@ struct CreateOrJoinView: View {
             HStack {
                 NavigationLink(destination: OnBoardLoginView(), isActive: $goToLogin) {
                     Button("Login") {
-                        self.goToLogin.toggle()
+                        goToLogin.toggle()
                     }
                 }
                 Spacer()

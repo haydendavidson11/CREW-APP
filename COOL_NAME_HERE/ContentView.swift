@@ -55,18 +55,17 @@ struct ContentView: View {
     
     // Navigates the user to a version of Me View when the user's company ID is set to "pending".
     var goToMeView: Bool {
-        
-        if state.loggedIn && state.user != nil && state.user?.userPreferences != nil && state.user?.companyID == "pending" {
-            
+        if state.loggedIn
+            && state.user != nil
+            && state.user?.userPreferences != nil
+            && state.user?.companyID == "pending"
+        {
             return true
-        } else {
-            
-            return false
         }
+            return false
     }
     
     var body: some View {
-        
         ZStack {
             VStack {
                 if (state.user != nil) && state.loggedIn {

@@ -77,7 +77,7 @@ struct ConfirmCompanyView: View {
                 state.shouldIndicateActivity = false
                 state.logoutPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
     
     func findCompany() {
@@ -191,14 +191,11 @@ struct CompanyPickerView: View {
             $requests.append(newRequest)
             alertTitle = "Success!"
             alertMessage = "Invite sent to \(companyName)"
-            print(state.user?.companyID)
         }
-        print(state.user?.companyID)
         
         let userConfig =  app.currentUser!.configuration(partitionValue: "user=\(state.user?._id ?? "")")
         try! Realm(configuration: userConfig).write {
             state.user?.companyID = "pending"
-            print(state.user?.companyID)
         }
         
     }

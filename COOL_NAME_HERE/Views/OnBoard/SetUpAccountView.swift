@@ -43,9 +43,7 @@ struct SetUpAccountView: View {
                 }
                 .padding(.vertical)
                 
-                
             } else {
-                
                 CallToActionButton(title: state.confirmationSent ? "Set up profile" : "Confirm Email") {
                     state.setUpNewCompany = false
                     if state.confirmationSent {
@@ -55,8 +53,6 @@ struct SetUpAccountView: View {
                     }
                 }
                 .padding(.vertical)
-                
-                
             }
             
             // TODO: Implement sign in with Apple
@@ -81,43 +77,43 @@ struct SetUpAccountView: View {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state.error = error.localizedDescription
+                    state.error = error.localizedDescription
                 }
             }, receiveValue: {
-                self.state.error = nil
+                state.error = nil
                 state.loginPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
-    
     
     private func signup(username: String, password: String) {
         if username.isEmpty || password.isEmpty {
             state.shouldIndicateActivity = false
             return
         }
-        self.state.error = nil
+        state.error = nil
         app.emailPasswordAuth.registerUser(email: username, password: password)
             .print()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: {
-                state.shouldIndicateActivity = false
-                switch $0 {
-                case .finished:
-                    break
-                case .failure(let error):
-                    self.state.error = error.localizedDescription
-                    if error.localizedDescription ==  "confirmation required" {
-                        state.confirmationSent = true
+            .sink(
+                receiveCompletion: {
+                    state.shouldIndicateActivity = false
+                    switch $0 {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        state.error = error.localizedDescription
+                        if error.localizedDescription ==  "confirmation required" {
+                            state.confirmationSent = true
+                        }
                     }
-                        
-                        
+                },
+                receiveValue: {
+                    state.error = nil
+                    login(username: username, password: password)
                 }
-            }, receiveValue: {
-                self.state.error = nil
-                login(username: username, password: password)
-            })
-            .store(in: &state.cancellables)
+            )
+            .store(in: &state.cancelables)
     }
     
     
@@ -126,7 +122,7 @@ struct SetUpAccountView: View {
             state.shouldIndicateActivity = false
             return
         }
-        self.state.error = nil
+        state.error = nil
         app.login(credentials: .emailPassword(email: username, password: password))
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {
@@ -135,13 +131,13 @@ struct SetUpAccountView: View {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state.error = error.localizedDescription
+                    state.error = error.localizedDescription
                 }
             }, receiveValue: {
-                self.state.error = nil
+                state.error = nil
                 state.loginPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
 }
 

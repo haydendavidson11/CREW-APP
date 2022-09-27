@@ -43,9 +43,8 @@ class AppState: ObservableObject {
     // Combine publisher for when we receive the user from the MongoDB Realm
     var userRealmPublisher = PassthroughSubject<Realm, Error>()
     
-    var cancellables = Set<AnyCancellable>()
+    var cancelables = Set<AnyCancellable>()
 
-    
     // This displays a progress view over any screen that is presented.
     var shouldIndicateActivity: Bool {
         get {
@@ -63,13 +62,13 @@ class AppState: ObservableObject {
             }
         }
     }
-    
-    
-    // Set to true when the user's company ID is set.
+
+    // Set true when the user's company ID is set.
     var userHasCompany: Bool {
         get {
-            if user?.companyID != nil && user?.companyID != "" && user?.companyID != "pending" {
-
+            if user?.companyID != nil
+                && user?.companyID != ""
+                && user?.companyID != "pending" {
                 return true
             } else {
                 return false
@@ -82,10 +81,8 @@ class AppState: ObservableObject {
                 companySet = false
             }
         }
-
     }
-    
-    
+
     // Permission for Admins
     var canEditAndDelete: Bool {
         if user?.role == "Admin" {
@@ -94,8 +91,7 @@ class AppState: ObservableObject {
             return false
         }
     }
-    
-    
+
     // Permission for Managers
     var canAddClient: Bool {
         if user?.role == "Admin" || user?.role == "Manager" {
@@ -104,27 +100,18 @@ class AppState: ObservableObject {
             return false
         }
     }
-    
-
     // The Current Realm User
     var user: User? {
         didSet {
-            print("User set")
-          
-            
             let calendarModel = MDPModel()
             calendarModel.user = user
             if let user = user {
 //                notificationHelper.getNewRequests(user: user)
-                print("have user")
-                
-                print("have app delegate")
                 let userConfig =  app.currentUser!.configuration(partitionValue: "user=\(user._id)")
                 try! Realm(configuration: userConfig).write {
                     user.deviceToken = AppDelegate.instance.token
                 }
             }
-            
         }
     }
 
@@ -141,8 +128,6 @@ class AppState: ObservableObject {
 
     }
 
-    
-    
     func initLoginPublisher() {
         loginPublisher
             .receive(on: DispatchQueue.main)
@@ -158,7 +143,7 @@ class AppState: ObservableObject {
                 return $0
             }
             .subscribe(userRealmPublisher)
-            .store(in: &self.cancellables)
+            .store(in: &cancelables)
     }
     
     func initUserRealmPublisher() {
@@ -173,7 +158,7 @@ class AppState: ObservableObject {
                 self.user = realm.objects(User.self).first
                 self.shouldIndicateActivity = false
             })
-            .store(in: &cancellables)
+            .store(in: &cancelables)
     }
     
     func initLogoutPublisher() {
@@ -183,6 +168,6 @@ class AppState: ObservableObject {
             }, receiveValue: { _ in
                 self.user = nil
             })
-            .store(in: &cancellables)
+            .store(in: &cancelables)
     }
 }

@@ -110,7 +110,7 @@ struct LoginView: View {
                 self.state.error = nil
                 login(username: username, password: password)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
     
     // TODO: Implement sign in with Apple
@@ -168,7 +168,7 @@ struct LoginView: View {
                 self.state.error = nil
                 state.loginPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
 }
 

@@ -28,7 +28,7 @@ struct LogoutButton: View {
                 state.shouldIndicateActivity = false
                 state.logoutPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
 }
 

@@ -244,7 +244,6 @@ struct MultiDatePicker: View {
                     return
                 }
                 
-                print(crewMember?.userName)
                 guard let availability = state.user?.userPreferences?.availability else {
                     print("Availability is nil")
                     return

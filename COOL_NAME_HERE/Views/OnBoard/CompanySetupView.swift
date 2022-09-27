@@ -14,9 +14,7 @@ struct CompanySetUpView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedResults(Company.self) var companies
-    
-    
-    
+
     @State var administrators = [String]()
     @State var members = [String]()
     @State var companyName = ""
@@ -66,7 +64,6 @@ struct CompanySetUpView: View {
                             
                         }
                         .padding(.horizontal)
-                        
                     }
                     
                     VStack(spacing: 8) {
@@ -78,8 +75,7 @@ struct CompanySetUpView: View {
                                 .padding(.horizontal)
                             Spacer()
                         }
-                        
-                        
+
                         TextEditor(text: $companyDescription)
                             .frame(minHeight: 100)
                             .padding(.horizontal, 5)
@@ -89,9 +85,7 @@ struct CompanySetUpView: View {
                             )
                             .padding(.horizontal)
                             .padding(.bottom)
-                        
-                        
-                        
+
                         VStack {
                             HStack {
                                 Text("Business info")
@@ -128,15 +122,13 @@ struct CompanySetUpView: View {
                     
                 }
             }
-            CallToActionButton(title: "Finish", action: {
-                print("Finish Button Pushed")
-                saveCompany()
-                print("Company Saved")
-                print(state.user?.companyID)
-                state.loginPublisher.send(app.currentUser!)
-                print("reload dashboard")
-                
-            })
+            CallToActionButton(
+                title: "Finish",
+                action: {
+                    saveCompany()
+                    state.loginPublisher.send(app.currentUser!)
+                }
+            )
                 .padding()
                 .environment(\.realmConfiguration,
                               app.currentUser!.configuration(partitionValue: "public=public"))
@@ -195,7 +187,6 @@ struct CompanySetUpView: View {
         try! Realm(configuration: userConfig).write {
             state.user?.companyID = companyID
             state.user?.role = "Admin"
-            print(state.user?.companyID)
         }
     }
 }

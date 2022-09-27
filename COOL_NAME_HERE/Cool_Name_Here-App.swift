@@ -37,14 +37,12 @@ struct Cool_Name_Here_app: SwiftUI.App {
                             }
                         }
                     }
-                    
-                    
+
                     if state.shouldIndicateActivity {
                         ProgressView("Fetching your info")
                     }
                 }
                 .onAppear(perform: {
-                    
                     calendarHelper.requestPermission()
                 })
                 .currentDeviceNavigationViewStyle(alwaysStacked: true)

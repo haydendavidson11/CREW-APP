@@ -35,7 +35,7 @@ struct OnBoardLoginView: View {
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
             InputField(title: "Password",
-                       text: self.$password,
+                       text: $password,
                        showingSecureField: true)
             CallToActionButton(
                 title: "Log In",
@@ -95,7 +95,7 @@ struct OnBoardLoginView: View {
             state.shouldIndicateActivity = false
             return
         }
-        self.state.error = nil
+        state.error = nil
         app.emailPasswordAuth.registerUser(email: username, password: password)
             .print()
             .receive(on: DispatchQueue.main)
@@ -108,10 +108,10 @@ struct OnBoardLoginView: View {
                     self.state.error = error.localizedDescription
                 }
             }, receiveValue: {
-                self.state.error = nil
+                state.error = nil
                 login(username: username, password: password)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
     
     private func login(username: String, password: String) {
@@ -119,7 +119,7 @@ struct OnBoardLoginView: View {
             state.shouldIndicateActivity = false
             return
         }
-        self.state.error = nil
+        state.error = nil
         app.login(credentials: .emailPassword(email: username, password: password))
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {
@@ -128,13 +128,13 @@ struct OnBoardLoginView: View {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state.error = error.localizedDescription
+                    state.error = error.localizedDescription
                 }
             }, receiveValue: {
-                self.state.error = nil
+                state.error = nil
                 state.loginPublisher.send($0)
             })
-            .store(in: &state.cancellables)
+            .store(in: &state.cancelables)
     }
 }
 

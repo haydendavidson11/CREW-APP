@@ -10,23 +10,19 @@ import EventKit
 import EventKitUI
 
 class CalendarHelper: ObservableObject {
-    let eventStore : EKEventStore = EKEventStore()
+    let eventStore: EKEventStore = EKEventStore()
     
-    var havePermision = false
+    var havePermission = false
           
     // 'EKEntityTypeReminder' or 'EKEntityTypeEvent'
     func requestPermission() {
-
         eventStore.requestAccess(to: .event) { (granted, error) in
           
           if (granted) && (error == nil) {
-              print("granted \(granted)")
-              print(error?.localizedDescription)
-              self.havePermision = true
+              self.havePermission = true
               
           }
           else{
-          
               print("failed to save event with error : \(error) or access not granted")
           }
         }
